@@ -1,174 +1,216 @@
-import React, { useState } from "react";
-import { Star, User, Package, Truck, DollarSign } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Star, User, Package, Truck, DollarSign, BarChart3, PieChart } from "lucide-react";
 
-// Datos de ejemplo para que los gráficos funcionen
-const ventasMensuales = [
-  { mes: "Ene", ingresos: 400, gastos: 240 },
-  { mes: "Feb", ingresos: 300, gastos: 139 },
-  { mes: "Mar", ingresos: 200, gastos: 380 },
-  { mes: "Abr", ingresos: 278, gastos: 390 },
-  { mes: "May", ingresos: 189, gastos: 480 },
-  { mes: "Jun", ingresos: 239, gastos: 380 },
-];
+const styles = {
+  pageContainer: {
+    minHeight: "100vh",
+    backgroundColor: "#f5f5f5",
+    paddingBottom: "20px",
+  },
+  content: {
+    padding: "20px",
+  },
+  card: {
+    backgroundColor: "white",
+    borderRadius: "15px",
+    padding: "20px",
+    marginBottom: "20px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+  },
+  cardTitle: {
+    fontSize: "16px",
+    fontWeight: "600",
+    color: "#666",
+    textAlign: "center",
+    marginBottom: "15px",
+  },
+  tabContainer: {
+    display: "flex",
+    gap: "10px",
+    marginBottom: "15px",
+  },
+  tab: {
+    flex: 1,
+    padding: "10px",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "14px",
+    fontWeight: "500",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+  },
+  tabActive: {
+    backgroundColor: "#1e5a8e",
+    color: "white",
+  },
+  tabInactive: {
+    backgroundColor: "#e8e8e8",
+    color: "#666",
+  },
+  chartPlaceholder: {
+    width: "100%",
+    height: "200px",
+    backgroundColor: "#f0f0f0",
+    borderRadius: "10px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: "15px",
+  },
+  statsContainer: {
+    display: "flex",
+    justifyContent: "space-around",
+    marginTop: "10px",
+  },
+  statItem: {
+    textAlign: "center",
+  },
+  statLabel: {
+    fontSize: "13px",
+    color: "#666",
+    marginBottom: "5px",
+  },
+  statValue: {
+    fontSize: "18px",
+    fontWeight: "bold",
+    color: "#333",
+  },
+  quickActionsCard: {
+    backgroundColor: "white",
+    borderRadius: "15px",
+    padding: "20px",
+    marginBottom: "20px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+  },
+  quickActionsTitle: {
+    fontSize: "16px",
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: "15px",
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+  },
+  quickActionsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "15px",
+  },
+  quickActionItem: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "8px",
+    cursor: "pointer",
+  },
+  quickActionIcon: {
+    width: "50px",
+    height: "50px",
+    backgroundColor: "#e8e8e8",
+    borderRadius: "10px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#666",
+  },
+  quickActionLabel: {
+    fontSize: "12px",
+    color: "#666",
+    textAlign: "center",
+  },
+};
 
-const municipios = [
-  { name: "San Salvador", porcentaje: 40, color: "#1a3a6b" },
-  { name: "Santa Tecla", porcentaje: 25, color: "#3b82f6" },
-  { name: "Mejicanos", porcentaje: 20, color: "#93c5fd" },
-  { name: "Otros", porcentaje: 15, color: "#e2e8f0" },
-];
+export default function Dashboard() {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("fiscal");
 
-function BarChart({ data }) {
-  const max = Math.max(...data.map((d) => Math.max(d.ingresos, d.gastos)));
   return (
-    <div className="w-full overflow-x-auto">
-      <div className="flex items-end gap-1 h-40 min-w-[320px] px-2">
-        {data.map((d, i) => (
-          <div key={i} className="flex flex-col items-center gap-0.5 flex-1">
-            <div className="flex items-end gap-0.5 h-32 w-full justify-center">
-              <div
-                className="bg-[#1a3a6b] rounded-t-sm w-2 transition-all"
-                style={{ height: `${(d.ingresos / max) * 100}%` }}
-              />
-              <div
-                className="bg-red-500 rounded-t-sm w-2 transition-all"
-                style={{ height: `${(d.gastos / max) * 100}%` }}
-              />
-            </div>
-            <span className="text-[8px] text-gray-500">{d.mes}</span>
-          </div>
-        ))}
-      </div>
-      <div className="flex gap-4 justify-center mt-2">
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-[#1a3a6b] rounded-sm" />
-          <span className="text-xs text-gray-500">Ingresos</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-red-500 rounded-sm" />
-          <span className="text-xs text-gray-500">Gastos</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PieChart({ data }) {
-  const total = data.reduce((s, d) => s + d.porcentaje, 0);
-  let cumulative = 0;
-  const size = 160;
-  const cx = size / 2;
-  const cy = size / 2;
-  const r = 60;
-
-  const slices = data.map((d) => {
-    const startAngle = (cumulative / total) * 2 * Math.PI - Math.PI / 2;
-    cumulative += d.porcentaje;
-    const endAngle = (cumulative / total) * 2 * Math.PI - Math.PI / 2;
-    const x1 = cx + r * Math.cos(startAngle);
-    const y1 = cy + r * Math.sin(startAngle);
-    const x2 = cx + r * Math.cos(endAngle);
-    const y2 = cy + r * Math.sin(endAngle);
-    const largeArc = endAngle - startAngle > Math.PI ? 1 : 0;
-    const midAngle = (startAngle + endAngle) / 2;
-    const lx = cx + (r * 0.65) * Math.cos(midAngle);
-    const ly = cy + (r * 0.65) * Math.sin(midAngle);
-    return { ...d, path: `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`, lx, ly };
-  });
-
-  return (
-    <div className="flex flex-col items-center">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        {slices.map((s, i) => (
-          <g key={i}>
-            <path d={s.path} fill={s.color} stroke="white" strokeWidth="1.5" />
-            <text x={s.lx} y={s.ly} textAnchor="middle" dominantBaseline="middle" fontSize="7" fill="white" fontWeight="bold">
-              {s.porcentaje}%
-            </text>
-          </g>
-        ))}
-      </svg>
-      <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-3">
-        {data.map((d, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: d.color }} />
-            <span className="text-xs text-gray-600">{d.name}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export default function Dashboard({ onNavigate }) {
-  const [tab, setTab] = useState("fiscal");
-
-  const quickActions = [
-    { label: "Usuario", icon: User, page: "clientes" },
-    { label: "Producto", icon: Package, page: "productos" },
-    { label: "Proveedor", icon: Truck, page: "proveedores" },
-    { label: "Venta", icon: DollarSign, page: "ventas" },
-  ];
-
-  const totalIngresos = ventasMensuales.reduce((acc, curr) => acc + curr.ingresos, 0);
-  const totalGastos = ventasMensuales.reduce((acc, curr) => acc + curr.gastos, 0);
-
-  return (
-    <div className="space-y-4 pb-2">
-      <div className="bg-white rounded-2xl shadow-sm p-4 mx-1">
-        <h2 className="text-center font-semibold text-gray-700 mb-3">Ingreso y gastos</h2>
-        <div className="flex gap-2 bg-gray-100 rounded-xl p-1 mb-4">
-          <button
-            onClick={() => setTab("fiscal")}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === "fiscal" ? "bg-[#1a3a6b] text-white shadow" : "text-gray-500"
-            }`}
-          >
-            Este año fiscal
-          </button>
-          <button
-            onClick={() => setTab("efectivo")}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === "efectivo" ? "bg-[#1a3a6b] text-white shadow" : "text-gray-500"
-            }`}
-          >
-            Efectivo
-          </button>
-        </div>
-        <BarChart data={ventasMensuales} />
-        <div className="flex justify-between mt-3 pt-3 border-t border-gray-100">
-          <div>
-            <p className="text-xs text-gray-400">Ingresos</p>
-            <p className="font-bold text-gray-800">${totalIngresos.toFixed(2)}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-gray-400">Gastos</p>
-            <p className="font-bold text-gray-800">${totalGastos.toFixed(2)}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-sm p-4 mx-1">
-        <h2 className="text-center font-semibold text-gray-700 mb-4">Municipios por orden de compras</h2>
-        <PieChart data={municipios} />
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-sm p-4 mx-1 border border-gray-200">
-        <div className="flex items-center gap-2 mb-4">
-          <Star size={18} className="text-gray-400" />
-          <h2 className="font-semibold text-gray-700">Creación rápida</h2>
-        </div>
-        <div className="grid grid-cols-4 gap-2">
-          {quickActions.map(({ label, icon: Icon, page }) => (
+    <div style={styles.pageContainer}>
+      <div style={styles.content}>
+        <div style={styles.card}>
+          <h3 style={styles.cardTitle}>Ingreso y gastos</h3>
+          
+          <div style={styles.tabContainer}>
             <button
-              key={label}
-              onClick={() => onNavigate(page)}
-              className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 hover:bg-blue-50 hover:border-blue-200 border border-gray-100 transition-all"
+              style={{
+                ...styles.tab,
+                ...(activeTab === "fiscal" ? styles.tabActive : styles.tabInactive),
+              }}
+              onClick={() => setActiveTab("fiscal")}
             >
-              <Icon size={22} className="text-gray-600" />
-              <span className="text-xs text-gray-600 font-medium">{label}</span>
+              Este año fiscal
             </button>
-          ))}
+            <button
+              style={{
+                ...styles.tab,
+                ...(activeTab === "efectivo" ? styles.tabActive : styles.tabInactive),
+              }}
+              onClick={() => setActiveTab("efectivo")}
+            >
+              Efectivo
+            </button>
+          </div>
+
+          <div style={styles.chartPlaceholder}>
+            <BarChart3 size={48} color="#1e5a8e" />
+          </div>
+
+          <div style={styles.statsContainer}>
+            <div style={styles.statItem}>
+              <div style={styles.statLabel}>Ingresos</div>
+              <div style={styles.statValue}>$00.00</div>
+            </div>
+            <div style={styles.statItem}>
+              <div style={styles.statLabel}>Gastos</div>
+              <div style={styles.statValue}>$00.00</div>
+            </div>
+          </div>
+        </div>
+
+        <div style={styles.card}>
+          <h3 style={styles.cardTitle}>Municipios por orden de compras</h3>
+          
+          <div style={styles.chartPlaceholder}>
+            <PieChart size={48} color="#1e5a8e" />
+          </div>
+        </div>
+
+        <div style={styles.quickActionsCard}>
+          <h3 style={styles.quickActionsTitle}>
+            <Star size={20} color="#333" />
+            Creacion rapida
+          </h3>
+          
+          <div style={styles.quickActionsGrid}>
+            <div style={styles.quickActionItem}>
+              <div style={styles.quickActionIcon}>
+                <User size={28} />
+              </div>
+              <span style={styles.quickActionLabel}>Usuario</span>
+            </div>
+
+            <div style={styles.quickActionItem}>
+              <div style={styles.quickActionIcon}>
+                <Package size={28} />
+              </div>
+              <span style={styles.quickActionLabel}>Producto</span>
+            </div>
+
+            <div style={styles.quickActionItem}>
+              <div style={styles.quickActionIcon}>
+                <Truck size={28} />
+              </div>
+              <span style={styles.quickActionLabel}>Proveedor</span>
+            </div>
+
+            <div style={styles.quickActionItem}>
+              <div style={styles.quickActionIcon}>
+                <DollarSign size={28} />
+              </div>
+              <span style={styles.quickActionLabel}>Venta</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

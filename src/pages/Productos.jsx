@@ -53,7 +53,6 @@ export function ProductosList({ onNavigate }) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
       <div className="bg-[#1a3a6b] text-white px-4 py-3 flex items-center justify-between">
         <h1 className="font-bold text-lg">Lista De Productos</h1>
         <div className="flex gap-3">
@@ -62,7 +61,6 @@ export function ProductosList({ onNavigate }) {
         </div>
       </div>
 
-      {/* Filters */}
       <div className="bg-white px-4 py-2 flex gap-2 border-b border-gray-100">
         {["todos", "sinstock"].map((f) => (
           <button
@@ -80,7 +78,6 @@ export function ProductosList({ onNavigate }) {
         </button>
       </div>
 
-      {/* Search */}
       <div className="bg-white px-4 py-2">
         <input
           type="text"
@@ -91,7 +88,6 @@ export function ProductosList({ onNavigate }) {
         />
       </div>
 
-      {/* List */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-3 pb-20">
         {filtered.map((p, i) => (
           <ProductCard
@@ -102,7 +98,6 @@ export function ProductosList({ onNavigate }) {
         ))}
       </div>
 
-      {/* FAB */}
       <button
         onClick={() => onNavigate("producto-nuevo")}
         className="fixed bottom-20 right-4 w-12 h-12 bg-[#1a3a6b] text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-800 transition-all z-40"
@@ -140,7 +135,6 @@ export function ProductoForm({ onBack, producto: initialData, isNew }) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
       <div className="bg-[#1a3a6b] text-white px-4 py-3 flex items-center justify-between">
         <button onClick={onBack} className="text-white text-lg font-bold">←</button>
         <h1 className="font-bold text-lg">Product details</h1>
@@ -153,7 +147,6 @@ export function ProductoForm({ onBack, producto: initialData, isNew }) {
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-4 bg-gray-50">
-        {/* Image placeholder */}
         <div className="flex justify-center">
           <div className="w-40 h-32 bg-white rounded-xl border border-gray-200 flex items-center justify-center">
             <Package size={40} className="text-gray-300" />

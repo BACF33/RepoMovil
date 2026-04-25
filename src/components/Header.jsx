@@ -1,13 +1,7 @@
 import React from "react";
 import { User, Search } from "lucide-react";
 
-const Header = ({ showSearch = false }) => {
-  // Definimos un usuario por defecto para evitar importar mockData
-  const currentUser = {
-    name: "Cristian",
-    role: "Administrador"
-  };
-
+const Header = ({ showSearch = false, userName = "Usuario", userRole = "Administrador" }) => {
   return (
     <header className="bg-[#1a3a6b] text-white p-4 rounded-b-3xl shadow-lg">
       <div className="flex justify-between items-center mb-4">
@@ -17,12 +11,12 @@ const Header = ({ showSearch = false }) => {
           </div>
           <div>
             <p className="text-xs text-blue-200">Bienvenido,</p>
-            <h2 className="font-bold text-sm">{currentUser.name}</h2>
+            <h2 className="font-bold text-sm">{userName}</h2>
           </div>
         </div>
         <div className="bg-blue-800/50 px-3 py-1 rounded-full border border-blue-400/30">
           <span className="text-[10px] font-medium uppercase tracking-wider">
-            {currentUser.role}
+            {userRole}
           </span>
         </div>
       </div>

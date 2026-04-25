@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BottomNav from "./components/BottomNav";
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
@@ -6,14 +7,15 @@ import Menu from "./pages/Menu";
 import { ProductosList } from "./pages/Productos";
 import Ventas, { VentaForm } from "./pages/Ventas";
 import { ClientesList, ProveedoresList } from "./pages/Personas";
+import IniciarSesion from "./pages/IniciarSesion";
+import Inicio from "./pages/Inicio";
 
 const MAIN_TABS = ["dashboard", "clientes", "ventas", "productos", "menu"];
 
-export default function App() {
+function AppContent() {
   const [currentPage, setCurrentPage] = useState("dashboard");
   const [activeTab, setActiveTab] = useState("dashboard");
 
-  // Estados locales
   const [clientes, setClientes] = useState([]);
   const [proveedores, setProveedores] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -88,5 +90,48 @@ export default function App() {
         />
       </div>
     </div>
+  );
+}
+
+function MainLayout({ children }) {
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex justify-center">
+      <div className="w-full max-w-sm min-h-screen bg-gray-50 flex flex-col relative shadow-2xl">
+        <Header />
+        <div className="flex-1 overflow-y-auto pb-20">
+          {children}
+        </div>
+        <BottomNav
+          active={activeTab}
+          onNavigate={(tab) => {
+            setActiveTab(tab);
+            window.location.href = `/${tab === 'dashboard' ? '' : tab}`;
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<IniciarSesion />} />
+        <Route path="/inicio" element={
+          <MainLayout>
+            <Inicio />
+          </MainLayout>
+        } />
+        <Route path="/" element={
+          <MainLayout>
+            <Dashboard />
+          </MainLayout>
+        } />
+        <Route path="/*" element={<AppContent />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

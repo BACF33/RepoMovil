@@ -31,7 +31,6 @@ export default function HistorialPedidos({ onNavigate }) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
       <div className="bg-[#1a3a6b] text-white px-4 py-3 flex items-center justify-between">
         <h1 className="font-bold text-lg">Historial de pedidos</h1>
         <div className="flex gap-3">
@@ -40,7 +39,6 @@ export default function HistorialPedidos({ onNavigate }) {
         </div>
       </div>
 
-      {/* Filters */}
       <div className="bg-white px-4 py-2 flex gap-2 border-b border-gray-100">
         {["todos", "sinstock"].map((f) => (
           <button
@@ -58,7 +56,6 @@ export default function HistorialPedidos({ onNavigate }) {
         </button>
       </div>
 
-      {/* Search */}
       <div className="bg-white px-4 py-2">
         <input
           type="text"
@@ -69,7 +66,6 @@ export default function HistorialPedidos({ onNavigate }) {
         />
       </div>
 
-      {/* List */}
       <div className="flex-1 overflow-y-auto px-3 py-2 pb-20">
         {filtered.map((p, i) => (
           <PedidoCard key={i} pedido={p} />
@@ -79,7 +75,6 @@ export default function HistorialPedidos({ onNavigate }) {
         )}
       </div>
 
-      {/* FAB */}
       <button
         onClick={() => onNavigate("venta-nueva")}
         className="fixed bottom-20 right-4 w-12 h-12 bg-[#1a3a6b] text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-800 transition-all z-40"
