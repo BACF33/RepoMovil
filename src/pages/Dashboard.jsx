@@ -1,6 +1,22 @@
 import React, { useState } from "react";
 import { Star, User, Package, Truck, DollarSign } from "lucide-react";
 
+// Datos de ejemplo para que los gráficos funcionen
+const ventasMensuales = [
+  { mes: "Ene", ingresos: 400, gastos: 240 },
+  { mes: "Feb", ingresos: 300, gastos: 139 },
+  { mes: "Mar", ingresos: 200, gastos: 380 },
+  { mes: "Abr", ingresos: 278, gastos: 390 },
+  { mes: "May", ingresos: 189, gastos: 480 },
+  { mes: "Jun", ingresos: 239, gastos: 380 },
+];
+
+const municipios = [
+  { name: "San Salvador", porcentaje: 40, color: "#1a3a6b" },
+  { name: "Santa Tecla", porcentaje: 25, color: "#3b82f6" },
+  { name: "Mejicanos", porcentaje: 20, color: "#93c5fd" },
+  { name: "Otros", porcentaje: 15, color: "#e2e8f0" },
+];
 
 function BarChart({ data }) {
   const max = Math.max(...data.map((d) => Math.max(d.ingresos, d.gastos)));
@@ -90,13 +106,15 @@ export default function Dashboard({ onNavigate }) {
   const quickActions = [
     { label: "Usuario", icon: User, page: "clientes" },
     { label: "Producto", icon: Package, page: "productos" },
-    { label: "Proveedor", icon: Truck, page: "menu" },
+    { label: "Proveedor", icon: Truck, page: "proveedores" },
     { label: "Venta", icon: DollarSign, page: "ventas" },
   ];
 
+  const totalIngresos = ventasMensuales.reduce((acc, curr) => acc + curr.ingresos, 0);
+  const totalGastos = ventasMensuales.reduce((acc, curr) => acc + curr.gastos, 0);
+
   return (
     <div className="space-y-4 pb-2">
-      {/* Ingresos y gastos */}
       <div className="bg-white rounded-2xl shadow-sm p-4 mx-1">
         <h2 className="text-center font-semibold text-gray-700 mb-3">Ingreso y gastos</h2>
         <div className="flex gap-2 bg-gray-100 rounded-xl p-1 mb-4">
@@ -114,33 +132,31 @@ export default function Dashboard({ onNavigate }) {
               tab === "efectivo" ? "bg-[#1a3a6b] text-white shadow" : "text-gray-500"
             }`}
           >
-            Eféctivo
+            Efectivo
           </button>
         </div>
         <BarChart data={ventasMensuales} />
         <div className="flex justify-between mt-3 pt-3 border-t border-gray-100">
           <div>
             <p className="text-xs text-gray-400">Ingresos</p>
-            <p className="font-bold text-gray-800">$00.00</p>
+            <p className="font-bold text-gray-800">${totalIngresos.toFixed(2)}</p>
           </div>
           <div className="text-right">
             <p className="text-xs text-gray-400">Gastos</p>
-            <p className="font-bold text-gray-800">$00.00</p>
+            <p className="font-bold text-gray-800">${totalGastos.toFixed(2)}</p>
           </div>
         </div>
       </div>
 
-      {/* Pie chart */}
       <div className="bg-white rounded-2xl shadow-sm p-4 mx-1">
         <h2 className="text-center font-semibold text-gray-700 mb-4">Municipios por orden de compras</h2>
         <PieChart data={municipios} />
       </div>
 
-      {/* Quick create */}
       <div className="bg-white rounded-2xl shadow-sm p-4 mx-1 border border-gray-200">
         <div className="flex items-center gap-2 mb-4">
           <Star size={18} className="text-gray-400" />
-          <h2 className="font-semibold text-gray-700">Creacion rapida</h2>
+          <h2 className="font-semibold text-gray-700">Creación rápida</h2>
         </div>
         <div className="grid grid-cols-4 gap-2">
           {quickActions.map(({ label, icon: Icon, page }) => (
